@@ -1,11 +1,11 @@
 package images
 
-// If you change the image tag, remember to update it in the preloading done
-// by GitHub actions (see .github/workflows/*).
-
-// These are variables so that they can be modified.
-
 var (
+	// If you change the image tag, remember to update it in the preloading done
+	// by GitHub actions (see .github/workflows/*).
+
+	// These are variables so that they can be modified.
+
 	Memcached        = "memcached:1.6.12"
 	Minio            = "minio/minio:RELEASE.2021-10-13T00-23-17Z"
 	KES              = "minio/kes:v0.17.1"
