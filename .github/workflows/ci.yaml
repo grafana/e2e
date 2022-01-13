@@ -27,8 +27,8 @@ jobs:
       - name: Lint
         run: make lint
 
-  # integration is run as a GitHub Action, as to run those test we require
-  # a docker socket to be available so containers can be run.
+  # integration is run as a GitHub Action, as to run those tests we require a
+  # docker socket to be available so containers can be run.
   integration:
     runs-on: ubuntu-20.04
     steps:
@@ -39,8 +39,7 @@ jobs:
       - name: Install Docker Client
         run: |
           sudo bash <<"EOF"
-          set -euo pipefail
-          set -x
+          set -xeuo pipefail
           VER="18.06.3-ce"
           curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
           echo "346f9394393ee8db5f8bd1e229ee9d90e5b36931bdd754308b2ae68884dd6822  /tmp/docker-$VER.tgz" | sha256sum -c
