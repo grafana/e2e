@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/cortexproject/cortex/integration/e2e"
-	"github.com/cortexproject/cortex/integration/e2e/images"
+	"github.com/grafana/e2e"
+	"github.com/grafana/e2e/images"
 )
 
 const (
