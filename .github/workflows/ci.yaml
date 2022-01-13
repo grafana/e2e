@@ -26,3 +26,26 @@ jobs:
           go-version: '1.17'
       - name: Lint
         run: make lint
+
+  # integration is run as a GitHub Action, as to run those tests we require a
+  # docker socket to be available so containers can be run.
+  integration:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
+      - name: Install Docker Client
+        run: |
+          sudo bash <<"EOF"
+          set -xeuo pipefail
+          VER="18.06.3-ce"
+          curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+          echo "346f9394393ee8db5f8bd1e229ee9d90e5b36931bdd754308b2ae68884dd6822  /tmp/docker-$VER.tgz" | sha256sum -c
+          tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+          mv /tmp/docker/* /usr/bin
+          EOF
+      - name: Integration Tests
+        run: |
+          make integration

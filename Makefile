@@ -8,3 +8,7 @@ lint:
 
 	# Configured via .golangci.yml.
 	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0 run
+
+.PHONY: integration
+integration:
+	go test -tags netgo,requires_docker -timeout 30m -v -count=1 ./
