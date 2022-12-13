@@ -260,7 +260,7 @@ func GetTempDirectory() (string, error) {
 }
 
 // based on GenerateTestHistograms in github.com/prometheus/prometheus/tsdb
-func generateTestHistogram(i int) *histogram.Histogram {
+func GenerateTestHistogram(i int) *histogram.Histogram {
 	return &histogram.Histogram{
 		Count:         5 + uint64(i*4),
 		ZeroCount:     2 + uint64(i),
@@ -327,7 +327,7 @@ func GenerateHistogramSeries(name string, ts time.Time, additionalLabels ...prom
 	// Generate the series
 	series = append(series, prompb.TimeSeries{
 		Labels:     lbls,
-		Histograms: []prompb.Histogram{remote.HistogramToHistogramProto(tsMillis, generateTestHistogram(0))},
+		Histograms: []prompb.Histogram{remote.HistogramToHistogramProto(tsMillis, GenerateTestHistogram(0))},
 	})
 
 	// Generate the expected vector and matrix when querying it
@@ -372,7 +372,7 @@ func GenerateNHistogramSeries(nSeries, nExemplars int, name func() string, ts ti
 
 		series = append(series, prompb.TimeSeries{
 			Labels:     lbls,
-			Histograms: []prompb.Histogram{remote.HistogramToHistogramProto(tsMillis, generateTestHistogram(i))},
+			Histograms: []prompb.Histogram{remote.HistogramToHistogramProto(tsMillis, GenerateTestHistogram(i))},
 		})
 	}
 
