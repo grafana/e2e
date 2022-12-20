@@ -87,4 +87,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/prometheus/common => github.com/zenador/prometheus-common v0.0.0-20221209210106-3f0f8c31fabd
+replace github.com/prometheus/common => github.com/zenador/prometheus-common v0.0.0-20221220150952-792823a40855

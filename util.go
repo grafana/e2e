@@ -277,38 +277,38 @@ func GenerateTestHistogram(i int) *histogram.Histogram {
 
 func generateTestSampleHistogram(i int) *model.SampleHistogram {
 	return &model.SampleHistogram{
-		Count: model.IntString(5 + i*4),
+		Count: model.FloatString(5 + i*4),
 		Sum:   model.FloatString(18.4 * float64(i+1)),
 		Buckets: model.HistogramBuckets{
 			&model.HistogramBucket{
 				Boundaries: 3,
 				Lower:      -0.001,
 				Upper:      0.001,
-				Count:      model.IntString(2 + i),
+				Count:      model.FloatString(2 + i),
 			},
 			&model.HistogramBucket{
 				Boundaries: 0,
 				Lower:      0.7071067811865475,
 				Upper:      1,
-				Count:      model.IntString(1 + i),
+				Count:      model.FloatString(1 + i),
 			},
 			&model.HistogramBucket{
 				Boundaries: 0,
 				Lower:      1,
 				Upper:      1.414213562373095,
-				Count:      model.IntString(2 + i),
+				Count:      model.FloatString(2 + i),
 			},
 			&model.HistogramBucket{
 				Boundaries: 0,
 				Lower:      2,
 				Upper:      2.82842712474619,
-				Count:      model.IntString(1 + i),
+				Count:      model.FloatString(1 + i),
 			},
 			&model.HistogramBucket{
 				Boundaries: 0,
 				Lower:      2.82842712474619,
 				Upper:      4,
-				Count:      model.IntString(1 + i),
+				Count:      model.FloatString(1 + i),
 			},
 		},
 	}
@@ -340,8 +340,7 @@ func GenerateHistogramSeries(name string, ts time.Time, additionalLabels ...prom
 	vector = append(vector, &model.Sample{
 		Metric:    metric,
 		Timestamp: model.Time(tsMillis),
-		Histogram: *generateTestSampleHistogram(0),
-		Type:      model.STHistogram,
+		Histogram: generateTestSampleHistogram(0),
 	})
 
 	matrix = append(matrix, &model.SampleStream{
@@ -352,7 +351,6 @@ func GenerateHistogramSeries(name string, ts time.Time, additionalLabels ...prom
 				Histogram: *generateTestSampleHistogram(0),
 			},
 		},
-		Type: model.STHistogram,
 	})
 
 	return
@@ -386,8 +384,7 @@ func GenerateNHistogramSeries(nSeries, nExemplars int, name func() string, ts ti
 		vector = append(vector, &model.Sample{
 			Metric:    metric,
 			Timestamp: model.Time(tsMillis),
-			Histogram: *generateTestSampleHistogram(i),
-			Type:      model.STHistogram,
+			Histogram: generateTestSampleHistogram(i),
 		})
 	}
 	return
