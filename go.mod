@@ -7,7 +7,7 @@ require (
 	github.com/grafana/dskit v0.0.0-20221018134951-0d3fc3d6c266
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_model v0.3.0
-	github.com/prometheus/common v0.37.0
+	github.com/prometheus/common v0.39.1-0.20230110141620-846591a16635
 	github.com/prometheus/prometheus v0.40.5-0.20221202105852-72a48321dabe
 	github.com/stretchr/testify v1.8.1
 	github.com/thanos-io/objstore v0.0.0-20220809103346-8ef1f215e2bf
@@ -86,5 +86,3 @@ require (
 	gopkg.in/ini.v1 v1.66.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/prometheus/common => github.com/zenador/prometheus-common v0.0.0-20221223120230-84e64ded26db
