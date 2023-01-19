@@ -357,7 +357,12 @@ func GenerateHistogramSeries(name string, ts time.Time, additionalLabels ...prom
 
 	// Generate the series
 	series = append(series, prompb.TimeSeries{
-		Labels:     lbls,
+		Labels: lbls,
+		Exemplars: []prompb.Exemplar{
+			{Value: float64(value), Timestamp: tsMillis, Labels: []prompb.Label{
+				{Name: "trace_id", Value: "1234"},
+			}},
+		},
 		Histograms: []prompb.Histogram{remote.HistogramToHistogramProto(tsMillis, GenerateTestHistogram(value))},
 	})
 
@@ -399,9 +404,17 @@ func GenerateNHistogramSeries(nSeries, nExemplars int, name func() string, ts ti
 			lbls = append(lbls, additionalLabels()...)
 		}
 
+		exemplars := []prompb.Exemplar{}
+		if i < nExemplars {
+			exemplars = []prompb.Exemplar{
+				{Value: float64(i), Timestamp: tsMillis, Labels: []prompb.Label{{Name: "trace_id", Value: "1234"}}},
+			}
+		}
+
 		series = append(series, prompb.TimeSeries{
 			Labels:     lbls,
 			Histograms: []prompb.Histogram{remote.HistogramToHistogramProto(tsMillis, GenerateTestHistogram(i))},
+			Exemplars:  exemplars,
 		})
 	}
 
