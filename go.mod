@@ -7,7 +7,7 @@ require (
 	github.com/grafana/dskit v0.0.0-20221018134951-0d3fc3d6c266
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_model v0.3.0
-	github.com/prometheus/common v0.39.1-0.20230110141620-846591a16635
+	github.com/prometheus/common v0.39.1-0.20230126140546-ca1f99be33b3
 	github.com/prometheus/prometheus v0.40.5-0.20221202105852-72a48321dabe
 	github.com/stretchr/testify v1.8.1
 	github.com/thanos-io/objstore v0.0.0-20220809103346-8ef1f215e2bf
