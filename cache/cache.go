@@ -24,7 +24,16 @@ func NewRedis() *e2e.ConcreteService {
 	return e2e.NewConcreteService(
 		"redis",
 		images.Redis,
-		nil,
+		// Set a memory limit, eviction policy, and disable persistence since Redis
+		// is used as a cache not a database. 64mb is picked for parity with the Memcached
+		// default memory limit.
+		e2e.NewCommand(
+			"redis-server",
+			"--maxmemory", "64mb",
+			"--maxmemory-policy", "allkeys-lru",
+			"--save", "''",
+			"--appendonly", "no",
+		),
 		e2e.NewTCPReadinessProbe(RedisPort),
 		RedisPort,
 	)
