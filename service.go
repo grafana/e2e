@@ -69,7 +69,7 @@ func NewConcreteService(
 		readiness:                    readiness,
 		retryBackoff: backoff.New(context.Background(), backoff.Config{
 			MinBackoff: 300 * time.Millisecond,
-			MaxBackoff: time.Second,
+			MaxBackoff: 600 * time.Millisecond,
 			MaxRetries: 100, // Sometimes the CI is slow ¯\_(ツ)_/¯
 		}),
 	}
