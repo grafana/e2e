@@ -14,7 +14,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/thanos-io/objstore/providers/s3"
-	"gopkg.in/yaml.v2"
+
+	// nolint: typecheck
+	"gopkg.in/yaml.v3"
 
 	"github.com/grafana/e2e"
 	e2edb "github.com/grafana/e2e/db"
@@ -48,6 +50,7 @@ func testMinioWorking(t *testing.T, m *e2e.HTTPService) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
 	defer cancel()
 
+	// nolint: typecheck
 	b, err := yaml.Marshal(s3.Config{
 		Endpoint:  m.HTTPEndpoint(),
 		Bucket:    bktName,
@@ -109,6 +112,7 @@ func TestScenario(t *testing.T) {
 	require.NoError(t, s.Stop(m1))
 
 	// Expect m1 not working.
+	// nolint: typecheck
 	b, err := yaml.Marshal(s3.Config{
 		Endpoint:  m1.Name(),
 		Bucket:    "cheescake",
@@ -133,6 +137,7 @@ func TestScenario(t *testing.T) {
 	s.Close()
 
 	// Expect m2 not working.
+	// nolint: typecheck
 	b, err = yaml.Marshal(s3.Config{
 		Endpoint:  m2.Name(),
 		Bucket:    "cheescake",
