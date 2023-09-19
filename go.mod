@@ -11,7 +11,7 @@ require (
 	github.com/prometheus/prometheus v0.44.0
 	github.com/stretchr/testify v1.8.2
 	github.com/thanos-io/objstore v0.0.0-20220809103346-8ef1f215e2bf
-	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -66,5 +66,5 @@ require (
 	google.golang.org/api v0.126.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
