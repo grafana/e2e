@@ -74,7 +74,7 @@ metric_b_summary_count 1
 	s := &HTTPService{
 		httpPort: 0,
 		ConcreteService: &ConcreteService{
-			networkPortsContainerToLocal: map[int]int{
+			portMapContainerToLocal: map[int]int{
 				0: port,
 			},
 		},
@@ -158,7 +158,7 @@ metric_b 1000
 	s := &HTTPService{
 		httpPort: 0,
 		ConcreteService: &ConcreteService{
-			networkPortsContainerToLocal: map[int]int{
+			portMapContainerToLocal: map[int]int{
 				0: port,
 			},
 		},
