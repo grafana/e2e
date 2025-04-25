@@ -9,33 +9,33 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.19'
+          go-version: "1.19"
       - name: Go test
         run: make test
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.19'
+          go-version: "1.19"
       - name: Lint
         run: make lint
 
   # integration is run as a GitHub Action, as to run those tests we require a
   # docker socket to be available so containers can be run.
   integration:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.19'
+          go-version: "1.19"
       - name: Install Docker Client
         run: |
           sudo bash <<"EOF"
