@@ -38,14 +38,11 @@ require (
 	github.com/efficientgo/tools/core v0.0.0-20220225185207-fe763185946b // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/googleapis/gax-go/v2 v2.14.1 // indirect
 	github.com/grafana/regexp v0.0.0-20240518133315-a468a5bfb3bc // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/cpuid v1.3.1 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/minio/md5-simd v1.1.0 // indirect
 	github.com/minio/minio-go/v7 v7.0.23 // indirect
 	github.com/minio/sha256-simd v0.1.1 // indirect
@@ -63,12 +60,11 @@ require (
 	github.com/twmb/franz-go/pkg/kmsg v1.11.2 // indirect
 	go.uber.org/goleak v1.3.0 // indirect
 	golang.org/x/crypto v0.39.0 // indirect
-	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
-	google.golang.org/api v0.230.0 // indirect
+	google.golang.org/genproto v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
