@@ -12,7 +12,7 @@ require (
 	github.com/prometheus/common v0.65.1-0.20250825082953-9deefbac4820
 	github.com/prometheus/prometheus v0.44.0
 	github.com/stretchr/testify v1.10.0
-	github.com/thanos-io/objstore v0.0.0-20220809103346-8ef1f215e2bf
+	github.com/thanos-io/objstore 4e5fd4289b50
 	github.com/twmb/franz-go v1.15.4
 	github.com/twmb/franz-go/pkg/kadm v1.10.0
 	gopkg.in/yaml.v3 v3.0.1
