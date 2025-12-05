@@ -59,7 +59,7 @@ require (
 	github.com/prometheus/client_golang v1.23.1-0.20250825092754-3692d7faba80 // indirect
 	github.com/prometheus/procfs v0.17.0 // indirect
 	github.com/rs/xid v1.2.1 // indirect
-	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/sirupsen/logrus v1.8.3 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.7.0 // indirect
 	go.uber.org/goleak v1.3.0 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
