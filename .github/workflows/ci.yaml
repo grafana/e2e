@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: addnab/docker-run-action@4f65fabd2431ebc8d299f8e5a018d79a769ae185
+      - uses: addnab/docker-run-action@3e77f186b7a929ef010f183a9e24c0f9955ea609
         with:
           image: docker:20.10.24
           options: --privileged
