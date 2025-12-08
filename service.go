@@ -33,18 +33,18 @@ var (
 // ConcreteService can be reused (started and stopped many time), but it can represent only one running container
 // at the time.
 type ConcreteService struct {
-	name         string
-	image        string
-	networkPorts []int
-	env          map[string]string
-	user         string
-	command      *Command
-	cmd          *exec.Cmd
-	readiness    ReadinessProbe
-	privileged   bool
+	name       string
+	image      string
+	ports      []int
+	env        map[string]string
+	user       string
+	command    *Command
+	cmd        *exec.Cmd
+	readiness  ReadinessProbe
+	privileged bool
 
 	// Maps container ports to dynamically binded local ports.
-	networkPortsContainerToLocal map[int]int
+	portMapContainerToLocal map[int]int
 
 	// Generic retry backoff.
 	retryBackoff *backoff.Backoff
@@ -59,15 +59,19 @@ func NewConcreteService(
 	image string,
 	command *Command,
 	readiness ReadinessProbe,
-	networkPorts ...int,
+	ports []int,
+	portMapContainerToLocal map[int]int,
 ) *ConcreteService {
+	if portMapContainerToLocal == nil {
+		portMapContainerToLocal = map[int]int{}
+	}
 	return &ConcreteService{
-		name:                         name,
-		image:                        image,
-		networkPorts:                 networkPorts,
-		command:                      command,
-		networkPortsContainerToLocal: map[int]int{},
-		readiness:                    readiness,
+		name:                    name,
+		image:                   image,
+		ports:                   ports,
+		command:                 command,
+		portMapContainerToLocal: portMapContainerToLocal,
+		readiness:               readiness,
 		retryBackoff: backoff.New(context.Background(), backoff.Config{
 			MinBackoff: 300 * time.Millisecond,
 			MaxBackoff: 600 * time.Millisecond,
@@ -124,7 +128,7 @@ func (s *ConcreteService) Start(networkName, sharedDir string) (err error) {
 	}
 
 	// Get the dynamic local ports mapped to the container.
-	for _, containerPort := range s.networkPorts {
+	for _, containerPort := range s.ports {
 		var out []byte
 
 		out, err = RunCommandAndGetOutput("docker", "port", s.containerName(), strconv.Itoa(containerPort))
@@ -141,10 +145,10 @@ func (s *ConcreteService) Start(networkName, sharedDir string) (err error) {
 			return errors.Wrapf(err, "unable to get mapping for port %d (output: %s); service: %s", containerPort, string(out), s.name)
 		}
 
-		s.networkPortsContainerToLocal[containerPort] = localPort
+		s.portMapContainerToLocal[containerPort] = localPort
 	}
 
-	logger.Log("Ports for container:", s.containerName(), "Mapping:", s.networkPortsContainerToLocal)
+	logger.Log("Ports for container:", s.containerName(), "Mapping:", s.portMapContainerToLocal)
 	return nil
 }
 
@@ -196,7 +200,7 @@ func (s *ConcreteService) Endpoint(port int) string {
 	}
 
 	// Map the container port to the local port.
-	localPort, ok := s.networkPortsContainerToLocal[port]
+	localPort, ok := s.portMapContainerToLocal[port]
 	if !ok {
 		return ""
 	}
@@ -325,8 +329,13 @@ func (s *ConcreteService) buildDockerRunArgs(networkName, sharedDir string) []st
 	}
 
 	// Published ports
-	for _, port := range s.networkPorts {
-		args = append(args, "-p", strconv.Itoa(port))
+	for _, containerPort := range s.ports {
+		if localPort, ok := s.portMapContainerToLocal[containerPort]; ok {
+			args = append(args, "-p", strconv.Itoa(localPort)+":"+strconv.Itoa(containerPort))
+
+		} else {
+			args = append(args, "-p", strconv.Itoa(containerPort))
+		}
 	}
 
 	// Disable entrypoint if required
@@ -561,10 +570,11 @@ func NewHTTPService(
 	command *Command,
 	readiness ReadinessProbe,
 	httpPort int,
-	otherPorts ...int,
+	otherPorts []int,
+	portMapContainerToLocal map[int]int,
 ) *HTTPService {
 	return &HTTPService{
-		ConcreteService: NewConcreteService(name, image, command, readiness, append(otherPorts, httpPort)...),
+		ConcreteService: NewConcreteService(name, image, command, readiness, append(otherPorts, httpPort), portMapContainerToLocal),
 		metricsTimeout:  time.Second,
 		httpPort:        httpPort,
 	}
@@ -576,7 +586,7 @@ func (s *HTTPService) SetMetricsTimeout(timeout time.Duration) {
 
 func (s *HTTPService) Metrics() (_ string, err error) {
 	// Map the container port to the local port
-	localPort := s.networkPortsContainerToLocal[s.httpPort]
+	localPort := s.portMapContainerToLocal[s.httpPort]
 
 	// Fetch metrics.
 	// Use an IPv4 address instead of "localhost" hostname because our port mapping assumes IPv4
