@@ -2,7 +2,7 @@ module github.com/grafana/e2e
 
 go 1.24.0
 
-toolchain go1.24.10
+toolchain go1.25.7
 
 require (
 	github.com/go-kit/log v0.2.1
