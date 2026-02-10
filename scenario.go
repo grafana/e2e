@@ -1,13 +1,11 @@
 package e2e
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 	"sync"
-
-	"github.com/pkg/errors"
-	tsdb_errors "github.com/prometheus/prometheus/tsdb/errors"
 )
 
 const (
@@ -59,7 +57,7 @@ func NewScenario(networkName string) (*Scenario, error) {
 	if out, err := RunCommandAndGetOutput("docker", args...); err != nil {
 		logger.Log(string(out))
 		s.clean()
-		return nil, errors.Wrapf(err, "create docker network '%s'", networkName)
+		return nil, fmt.Errorf("create docker network '%s': %w", networkName, err)
 	}
 
 	return s, nil
@@ -136,7 +134,7 @@ func (s *Scenario) Start(services ...Service) error {
 	// Add the successfully started services to the scenario.
 	s.services = append(s.services, started...)
 
-	return errs.Err()
+	return errors.Join(errs...)
 }
 
 func (s *Scenario) Stop(services ...Service) error {
