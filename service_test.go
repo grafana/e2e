@@ -22,7 +22,7 @@ func TestWaitSumMetric(t *testing.T) {
 	// the first time (this avoid flaky tests).
 	ln, err := net.Listen("tcp", "localhost:0")
 	require.NoError(t, err)
-	defer ln.Close()
+	defer func() { _ = ln.Close() }()
 
 	// Get the port.
 	_, addrPort, err := net.SplitHostPort(ln.Addr().String())
@@ -33,7 +33,7 @@ func TestWaitSumMetric(t *testing.T) {
 
 	// Start an HTTP server exposing the metrics.
 	srv := &http.Server{
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			_, _ = w.Write([]byte(`
 # HELP metric_c cheescake
 # TYPE metric_c gauge
@@ -65,7 +65,7 @@ metric_b_summary_count 1
 `))
 		}),
 	}
-	defer srv.Close()
+	defer func() { _ = srv.Close() }()
 
 	go func() {
 		_ = srv.Serve(ln)
@@ -118,7 +118,7 @@ func TestWaitSumMetric_Nan(t *testing.T) {
 	// the first time (this avoid flaky tests).
 	ln, err := net.Listen("tcp", "localhost:0")
 	require.NoError(t, err)
-	defer ln.Close()
+	defer func() { _ = ln.Close() }()
 
 	// Get the port.
 	_, addrPort, err := net.SplitHostPort(ln.Addr().String())
@@ -129,7 +129,7 @@ func TestWaitSumMetric_Nan(t *testing.T) {
 
 	// Start an HTTP server exposing the metrics.
 	srv := &http.Server{
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			_, _ = w.Write([]byte(`
 # HELP metric_c cheescake
 # TYPE metric_c GAUGE
@@ -149,7 +149,7 @@ metric_b 1000
 `))
 		}),
 	}
-	defer srv.Close()
+	defer func() { _ = srv.Close() }()
 
 	go func() {
 		_ = srv.Serve(ln)

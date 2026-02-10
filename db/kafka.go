@@ -32,7 +32,7 @@ func NewKafka() *KafkaService {
 func (s *KafkaService) Start(networkName, sharedDir string) (err error) {
 	// Configures Kafka right before starting it so that we have the networkName to correctly compute
 	// the advertised host.
-	s.HTTPService.SetEnvVars(map[string]string{
+	s.SetEnvVars(map[string]string{
 		// Configure Kafka to run in KRaft mode (without Zookeeper).
 		"CLUSTER_ID":                      "NqnEdODVKkiLTfJvqd1uqQ==", // A random ID (16 bytes of a base64-encoded UUID).
 		"KAFKA_BROKER_ID":                 "1",
@@ -79,9 +79,10 @@ func (p *KafkaReadinessProbe) Ready(service *e2e.ConcreteService) (err error) {
 	const timeout = time.Second
 
 	endpoint := service.Endpoint(p.port)
-	if endpoint == "" {
+	switch endpoint {
+	case "":
 		return fmt.Errorf("cannot get service endpoint for port %d", p.port)
-	} else if endpoint == "stopped" {
+	case "stopped":
 		return errors.New("service has stopped")
 	}
 
