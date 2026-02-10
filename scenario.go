@@ -1,13 +1,13 @@
 package e2e
 
 import (
+	stderrors "errors"
 	"fmt"
 	"os"
 	"strings"
 	"sync"
 
 	"github.com/pkg/errors"
-	tsdb_errors "github.com/prometheus/prometheus/tsdb/errors"
 )
 
 const (
@@ -97,7 +97,7 @@ func (s *Scenario) Start(services ...Service) error {
 		startedMx = sync.Mutex{}
 		started   = make([]Service, 0, len(services))
 		errsMx    = sync.Mutex{}
-		errs      = tsdb_errors.NewMulti()
+		errs      []error
 	)
 
 	// Ensure provided services don't conflict with existing ones.
@@ -117,7 +117,7 @@ func (s *Scenario) Start(services ...Service) error {
 			// Start the service.
 			if err := service.Start(s.networkName, s.SharedDir()); err != nil {
 				errsMx.Lock()
-				errs.Add(err)
+				errs = append(errs, err)
 				errsMx.Unlock()
 				return
 			}
@@ -136,7 +136,7 @@ func (s *Scenario) Start(services ...Service) error {
 	// Add the successfully started services to the scenario.
 	s.services = append(s.services, started...)
 
-	return errs.Err()
+	return stderrors.Join(errs...)
 }
 
 func (s *Scenario) Stop(services ...Service) error {
