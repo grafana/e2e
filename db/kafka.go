@@ -40,7 +40,6 @@ func (c KafkaConfig) ports() (clientPort, readinessPort int) {
 }
 
 func (c KafkaConfig) New() *KafkaService {
-	readinessPort := 9092
 	clientPort, readinessPort := c.ports()
 	var otherPorts []int
 	if readinessPort != clientPort {
