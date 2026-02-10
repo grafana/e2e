@@ -147,7 +147,7 @@ func (s *KafkaService) Start(networkName, sharedDir string) (err error) {
 
 	// Configures Kafka right before starting it so that we have the networkName to correctly compute
 	// the advertised host.
-	s.HTTPService.SetEnvVars(vars)
+	s.SetEnvVars(vars)
 
 	return s.HTTPService.Start(networkName, sharedDir)
 }
