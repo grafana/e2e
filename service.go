@@ -303,7 +303,8 @@ func (s *ConcreteService) WaitReady() (err error) {
 }
 
 func (s *ConcreteService) buildDockerRunArgs(networkName, sharedDir string) []string {
-	args := []string{"run", "--rm", "--net=" + networkName, "--name=" + networkName + "-" + s.name, "--hostname=" + s.name}
+	networkContainerHost := NetworkContainerHost(networkName, s.name)
+	args := []string{"run", "--rm", "--net=" + networkName, "--name=" + networkContainerHost, "--hostname=" + s.name, "--network-alias=" + networkContainerHost}
 
 	// If running a dind container, this needs to be privileged.
 	if s.privileged {
