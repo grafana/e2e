@@ -336,6 +336,7 @@ func (s *KafkaService) generateTLSCerts(networkName, sharedDir string) error {
 	}
 
 	brokerHostname := fmt.Sprintf("%s-kafka", networkName)
+	serverKeyPath := filepath.Join(tlsDir, "server.key")
 	if err := ca.WriteCertificate(
 		&x509.Certificate{
 			Subject:     pkix.Name{CommonName: "kafka"},
@@ -343,9 +344,14 @@ func (s *KafkaService) generateTLSCerts(networkName, sharedDir string) error {
 			ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		},
 		filepath.Join(tlsDir, "server.crt"),
-		filepath.Join(tlsDir, "server.key"),
+		serverKeyPath,
 	); err != nil {
 		return fmt.Errorf("writing server certificate: %w", err)
+	}
+
+	// Make the key readable by the Docker container.
+	if err := os.Chmod(serverKeyPath, 0644); err != nil {
+		return fmt.Errorf("chmod server key: %w", err)
 	}
 
 	return nil
@@ -392,7 +398,9 @@ keytool -importcert \
 
 printf '%%s' "$STORE_PASS" > "$SECRETS_DIR/keystore_creds"
 printf '%%s' "$STORE_PASS" > "$SECRETS_DIR/key_creds"
-printf '%%s' "$STORE_PASS" > "$SECRETS_DIR/truststore_creds"`,
+printf '%%s' "$STORE_PASS" > "$SECRETS_DIR/truststore_creds"
+
+chmod -R a+r "$SECRETS_DIR"`,
 		kafkaSSLStorePassword,
 		e2e.ContainerSharedDir, kafkaTLSDir,
 		e2e.ContainerSharedDir, kafkaTLSSecretsDir,
@@ -400,6 +408,7 @@ printf '%%s' "$STORE_PASS" > "$SECRETS_DIR/truststore_creds"`,
 
 	output, err := e2e.RunCommandAndGetOutput(
 		"docker", "run", "--rm",
+		"--user", "0:0",
 		"-v", fmt.Sprintf("%s:%s:z", sharedDir, e2e.ContainerSharedDir),
 		images.Kafka,
 		"/bin/bash", "-c", script,
