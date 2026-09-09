@@ -5,7 +5,7 @@ go 1.25.5
 require (
 	github.com/go-kit/log v0.2.1
 	github.com/grafana/dskit v0.0.0-20230914143233-4b32fbf08128
-	github.com/prometheus/client_model v0.6.2
+	github.com/prometheus/client_model v0.6.3
 	github.com/prometheus/common v0.67.5
 	github.com/prometheus/prometheus v0.311.3
 	github.com/stretchr/testify v1.11.1
@@ -75,7 +75,7 @@ require (
 	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.35.0 // indirect
 	google.golang.org/genproto v0.0.0-20250603155806-513f23925822 // indirect
-	google.golang.org/protobuf v1.36.11 // indirect
+	google.golang.org/protobuf v1.36.12 // indirect
 	gopkg.in/ini.v1 v1.67.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
