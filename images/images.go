@@ -12,11 +12,11 @@ var (
 	// MINIO_SECRET_KEY that db.NewMinio sets, verified still honoured) and /minio/* routes;
 	// only the server binary name changes from `minio` to `silo` (see db.NewMinio below).
 	Minio = "pgsty/silo:RELEASE.2026-09-03T13-18-01Z"
+	// RustFS is an Apache-2.0 S3-compatible server, used by db.NewRustFS as an alternative to MinIO.
+	RustFS = "rustfs/rustfs:1.0.0"
 	// quay.io/minio/kes (the standalone KES key-encryption-service, used by NewKES/
 	// NewMinioWithKES) is a separate image from MinIO/Silo itself and is still resolving on
 	// quay.io as of Sep 2026, so it is left unchanged here.
-	// RustFS is an Apache-2.0 S3-compatible server, used by db.NewRustFS as an alternative to MinIO.
-	RustFS           = "rustfs/rustfs:1.0.0"
 	KES              = "quay.io/minio/kes:v0.17.1"
 	Consul           = "consul:1.8.15"
 	ETCD             = "gcr.io/etcd-development/etcd:v3.4.13"
