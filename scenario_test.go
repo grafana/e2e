@@ -151,3 +151,16 @@ func TestScenario(t *testing.T) {
 	_, err = bkt.Get(context.Background(), "recipe")
 	require.Error(t, err)
 }
+
+func TestRustFS(t *testing.T) {
+	s, err := e2e.NewScenario("e2e-rustfs-test")
+	require.NoError(t, err)
+	defer s.Close()
+
+	r1 := e2edb.NewRustFS(9000, bktName)
+	r2 := e2edb.NewRustFS(9001, bktName)
+	require.NoError(t, s.StartAndWaitReady(r1, r2))
+
+	testMinioWorking(t, r1)
+	testMinioWorking(t, r2)
+}
