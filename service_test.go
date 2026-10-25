@@ -4,6 +4,7 @@
 package e2e
 
 import (
+	"context"
 	"math"
 	"net"
 	"net/http"
@@ -110,6 +111,32 @@ metric_b_summary_count 1
 	require.Error(t, s.WaitSumMetrics(LessAmongTwo, "metric_b", "metric_a"))
 
 	require.Error(t, s.WaitSumMetrics(Equals(0), "non_existing_metric"))
+
+	// A missing metric counts as a retry, so the wait stops when the retries run out.
+	requireWaitGivesUp(t, func() error {
+		return s.WaitSumMetricsWithOptions(Equals(0), []string{"non_existing_metric"}, WaitMissingMetrics)
+	})
+
+	c := NewCompositeHTTPService(s)
+	c.retryBackoff = backoff.New(context.Background(), backoff.Config{MaxRetries: 1})
+	requireWaitGivesUp(t, func() error {
+		return c.WaitSumMetricsWithOptions(Equals(0), []string{"non_existing_metric"}, WaitMissingMetrics)
+	})
+}
+
+// requireWaitGivesUp fails the test if wait does not return a missing metric error in time.
+func requireWaitGivesUp(t *testing.T, wait func() error) {
+	t.Helper()
+
+	errs := make(chan error, 1)
+	go func() { errs <- wait() }()
+
+	select {
+	case err := <-errs:
+		require.ErrorContains(t, err, errMissingMetric.Error())
+	case <-time.After(10 * time.Second):
+		t.Fatal("wait did not stop on a missing metric")
+	}
 }
 
 func TestWaitSumMetric_Nan(t *testing.T) {
