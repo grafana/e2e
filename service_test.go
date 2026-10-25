@@ -246,6 +246,7 @@ func TestWaitSumMetric_WaitMissingMetrics(t *testing.T) {
 	require.NoError(t, s.WaitSumMetricsWithOptions(Equals(2), []string{"metric_b"}, WaitMissingMetrics))
 	require.Equal(t, int32(3), requests.Load())
 
+	// CompositeHTTPService has its own copy of the wait loop.
 	requests.Store(0)
 	c := NewCompositeHTTPService(s)
 	c.retryBackoff = backoff.New(t.Context(), cfg)
