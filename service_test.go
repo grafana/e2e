@@ -4,11 +4,11 @@
 package e2e
 
 import (
-	"context"
 	"math"
 	"net"
 	"net/http"
 	"strconv"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -118,7 +118,7 @@ metric_b_summary_count 1
 	})
 
 	c := NewCompositeHTTPService(s)
-	c.retryBackoff = backoff.New(context.Background(), backoff.Config{MaxRetries: 1})
+	c.retryBackoff = backoff.New(t.Context(), backoff.Config{MaxRetries: 1})
 	requireWaitGivesUp(t, func() error {
 		return c.WaitSumMetricsWithOptions(Equals(0), []string{"non_existing_metric"}, WaitMissingMetrics)
 	})
@@ -133,6 +133,7 @@ func requireWaitGivesUp(t *testing.T, wait func() error) {
 
 	select {
 	case err := <-errs:
+		require.ErrorContains(t, err, "unable to find metrics")
 		require.ErrorContains(t, err, errMissingMetric.Error())
 	case <-time.After(10 * time.Second):
 		t.Fatal("wait did not stop on a missing metric")
@@ -197,6 +198,59 @@ metric_b 1000
 		MaxRetries: 50,
 	})
 	require.NoError(t, s.WaitSumMetrics(Equals(math.NaN()), "metric_a"))
+}
+
+func TestWaitSumMetric_WaitMissingMetrics(t *testing.T) {
+	// Listen on a random port before starting the HTTP server, to
+	// make sure the port is already open when we'll call WaitSumMetric()
+	// the first time (this avoid flaky tests).
+	ln, err := net.Listen("tcp", "localhost:0")
+	require.NoError(t, err)
+	defer func() { _ = ln.Close() }()
+
+	// Get the port.
+	_, addrPort, err := net.SplitHostPort(ln.Addr().String())
+	require.NoError(t, err)
+
+	port, err := strconv.Atoi(addrPort)
+	require.NoError(t, err)
+
+	// Start an HTTP server that exposes metric_b from the third request.
+	var requests atomic.Int32
+	srv := &http.Server{
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			metrics := "# TYPE metric_a gauge\nmetric_a 1\n"
+			if requests.Add(1) >= 3 {
+				metrics += "# TYPE metric_b gauge\nmetric_b 2\n"
+			}
+			_, _ = w.Write([]byte(metrics))
+		}),
+	}
+	defer func() { _ = srv.Close() }()
+
+	go func() {
+		_ = srv.Serve(ln)
+	}()
+
+	s := &HTTPService{
+		httpPort: 0,
+		ConcreteService: &ConcreteService{
+			networkPortsContainerToLocal: map[int]int{
+				0: port,
+			},
+		},
+	}
+
+	cfg := backoff.Config{MinBackoff: time.Millisecond, MaxBackoff: time.Millisecond, MaxRetries: 5}
+	s.SetBackoff(cfg)
+	require.NoError(t, s.WaitSumMetricsWithOptions(Equals(2), []string{"metric_b"}, WaitMissingMetrics))
+	require.Equal(t, int32(3), requests.Load())
+
+	requests.Store(0)
+	c := NewCompositeHTTPService(s)
+	c.retryBackoff = backoff.New(t.Context(), cfg)
+	require.NoError(t, c.WaitSumMetricsWithOptions(Equals(2), []string{"metric_b"}, WaitMissingMetrics))
+	require.Equal(t, int32(3), requests.Load())
 }
 
 func TestParseDockerPort(t *testing.T) {
