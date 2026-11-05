@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
         with:
@@ -23,7 +23,7 @@ jobs:
       - name: Go test
         run: make test
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
         with:
@@ -37,7 +37,7 @@ jobs:
   # integration is run as a GitHub Action, as to run those tests we require a
   # docker socket to be available so containers can be run.
   integration:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
         with:
